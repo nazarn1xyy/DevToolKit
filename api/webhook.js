@@ -31,13 +31,13 @@ export default async function handler(req, res) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: chatId,
-          text: '⚡ *DevToolkit*\n\nDeveloper utilities — in your pocket.\n\n15 tools: colors, CSS gen, JSON formatter, image compressor, Python generators, and more.',
+          text: '*DevToolkit*\n\nDeveloper utilities — in your pocket.\n\n15 tools: colors, CSS gen, JSON formatter, image compressor, Python generators, and more.',
           parse_mode: 'Markdown',
           reply_markup: {
             inline_keyboard: [
               [
                 {
-                  text: '◆ Open DevToolkit',
+                  text: 'Open DevToolkit',
                   web_app: { url: WEBAPP_URL },
                 },
               ],
