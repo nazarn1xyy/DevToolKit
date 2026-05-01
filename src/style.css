@@ -79,7 +79,7 @@ body {
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  padding-top: calc(12px + var(--safe-top));
+  padding-top: calc(48px + var(--safe-top));
   min-height: calc(var(--header-h) + var(--safe-top));
   background: var(--bg);
   position: relative;
@@ -535,7 +535,7 @@ input[type="color"]::-webkit-color-swatch {
 /* Toast */
 #toast-container {
   position: fixed;
-  top: calc(12px + var(--safe-top));
+  top: calc(60px + var(--safe-top));
   left: 50%;
   transform: translateX(-50%);
   z-index: 9999;
