@@ -25,6 +25,8 @@ import { renderHashGen } from './tools/hash-gen.js';
 import { renderDiff } from './tools/diff-viewer.js';
 import { renderTimestamp } from './tools/timestamp.js';
 import { renderCurlConverter } from './tools/curl-converter.js';
+import { renderMarkdown } from './tools/markdown-preview.js';
+import { renderContrastChecker } from './tools/contrast-checker.js';
 
 // ── Telegram Web App ──
 const tg = window.Telegram?.WebApp;
@@ -70,6 +72,17 @@ export function copyText(text) {
   });
 }
 
+export function shareToTelegram(text) {
+  const tg = window.Telegram?.WebApp;
+  if (tg?.switchInlineQuery) {
+    // Opens inline mode with the text pre-filled
+    try { tg.switchInlineQuery(text, ['users', 'groups', 'channels']); return; } catch (_) {}
+  }
+  // Fallback: copy to clipboard
+  copyText(text);
+  showToast('Copied — paste in chat');
+}
+
 // ── Router ──
 const routes = {
   '': renderHome,
@@ -95,6 +108,8 @@ const routes = {
   'diff-viewer': renderDiff,
   'timestamp': renderTimestamp,
   'curl-converter': renderCurlConverter,
+  'markdown-preview': renderMarkdown,
+  'contrast-checker': renderContrastChecker,
 };
 
 const routeTitles = {
@@ -121,6 +136,8 @@ const routeTitles = {
   'diff-viewer': 'Diff Viewer',
   'timestamp': 'Timestamp',
   'curl-converter': 'cURL → Fetch',
+  'markdown-preview': 'Markdown',
+  'contrast-checker': 'Contrast',
 };
 
 let currentCleanup = null;

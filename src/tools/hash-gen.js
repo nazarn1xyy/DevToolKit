@@ -1,5 +1,5 @@
 import { icon } from '../icons.js';
-import { copyText, haptic, showToast } from '../main.js';
+import { copyText, haptic, showToast, shareToTelegram } from '../main.js';
 
 const ALGORITHMS = ['SHA-256', 'SHA-384', 'SHA-512', 'SHA-1'];
 
@@ -39,7 +39,10 @@ export function renderHashGen(container) {
         <div class="section flex-col gap-md">
           <div class="code-block-header">
             <span>${algo}</span>
-            <button class="btn btn-sm btn-secondary hg-copy" data-h="${h}">${icon('copy',14)} Copy</button>
+            <div class="flex-row gap-sm">
+              <button class="btn btn-sm btn-secondary hg-copy" data-h="${h}">${icon('copy',14)} Copy</button>
+              <button class="btn-share btn-sm hg-share" data-h="${algo}: ${h}">${icon('send',14)} Share</button>
+            </div>
           </div>
           <div class="code-block" style="font-size:11px;word-break:break-all">${h}</div>
         </div>`;
@@ -47,6 +50,9 @@ export function renderHashGen(container) {
 
     results.querySelectorAll('.hg-copy').forEach(btn => {
       btn.addEventListener('click', () => copyText(btn.dataset.h));
+    });
+    results.querySelectorAll('.hg-share').forEach(btn => {
+      btn.addEventListener('click', () => shareToTelegram(btn.dataset.h));
     });
     haptic('success');
   });

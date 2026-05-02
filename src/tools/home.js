@@ -27,6 +27,8 @@ const allTools = [
   { id: 'diff-viewer', name: 'Diff', desc: 'Compare two texts', icon: 'diff', section: 'new' },
   { id: 'timestamp', name: 'Timestamp', desc: 'Unix ↔ human date', icon: 'clock', section: 'new' },
   { id: 'curl-converter', name: 'cURL → Fetch', desc: 'Convert HTTP requests', icon: 'terminal', section: 'new' },
+  { id: 'markdown-preview', name: 'Markdown', desc: 'Live preview renderer', icon: 'fileText', section: 'new' },
+  { id: 'contrast-checker', name: 'Contrast', desc: 'WCAG color checker', icon: 'contrast', section: 'new' },
 ];
 
 // ── Persistence helpers ──

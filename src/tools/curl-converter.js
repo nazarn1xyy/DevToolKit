@@ -1,5 +1,5 @@
 import { icon } from '../icons.js';
-import { copyText, haptic, showToast } from '../main.js';
+import { copyText, haptic, showToast, shareToTelegram } from '../main.js';
 
 function parseCurl(cmd) {
   const result = { method: 'GET', url: '', headers: {}, body: null };
@@ -108,7 +108,10 @@ export function renderCurlConverter(container) {
           <div class="section flex-col gap-md">
             <div class="code-block-header">
               <span>JAVASCRIPT</span>
-              <button class="btn btn-sm btn-secondary" id="cc-copy">${icon('copy',14)} Copy</button>
+              <div class="flex-row gap-sm">
+                <button class="btn btn-sm btn-secondary" id="cc-copy">${icon('copy',14)} Copy</button>
+                <button class="btn-share btn-sm" id="cc-share">${icon('send',14)} Share</button>
+              </div>
             </div>
             <div class="code-block" id="cc-result" style="max-height:350px;overflow-y:auto"></div>
           </div>
@@ -138,6 +141,7 @@ export function renderCurlConverter(container) {
     });
 
     container.querySelector('#cc-copy')?.addEventListener('click', () => { if (result) copyText(result); });
+    container.querySelector('#cc-share')?.addEventListener('click', () => { if (result) shareToTelegram(result); });
   }
   render();
 }

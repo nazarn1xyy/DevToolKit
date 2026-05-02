@@ -1,5 +1,5 @@
 import { icon } from '../icons.js';
-import { copyText, haptic } from '../main.js';
+import { copyText, haptic, shareToTelegram } from '../main.js';
 
 function computeDiff(a, b) {
   const linesA = a.split('\n');
@@ -65,7 +65,10 @@ export function renderDiff(container) {
       <div class="section flex-col gap-md">
         <div class="code-block-header">
           <span style="color:#4ade80">+${adds}</span>&nbsp;&nbsp;<span style="color:#f87171">-${dels}</span>
-          <button class="btn btn-sm btn-secondary" id="df-copy">${icon('copy',14)} Copy</button>
+          <div class="flex-row gap-sm">
+            <button class="btn btn-sm btn-secondary" id="df-copy">${icon('copy',14)} Copy</button>
+            <button class="btn-share btn-sm" id="df-share">${icon('send',14)} Share</button>
+          </div>
         </div>
         <div class="code-block" style="max-height:400px;overflow-y:auto;padding:0">
           ${ops.map(o => {
@@ -82,6 +85,7 @@ export function renderDiff(container) {
     }).join('\n');
 
     out.querySelector('#df-copy')?.addEventListener('click', () => copyText(diffText));
+    out.querySelector('#df-share')?.addEventListener('click', () => shareToTelegram(diffText));
     haptic('success');
   });
 }
