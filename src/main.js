@@ -211,6 +211,8 @@ function init() {
   if (tg) {
     tg.ready();
     tg.expand();
+    // Request true fullscreen (hides native Telegram header)
+    try { if (tg.requestFullscreen) tg.requestFullscreen(); } catch (_) {}
     tg.setHeaderColor('#000000');
     tg.setBackgroundColor('#000000');
     if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
