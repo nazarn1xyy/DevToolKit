@@ -2,7 +2,7 @@
 // SPA Router + Telegram Web App init + PWA registration
 import './style.css';
 import { icon } from './icons.js';
-import { renderHome } from './tools/home.js';
+import { renderHome, trackRecent } from './tools/home.js';
 import { renderColorPicker } from './tools/color-picker.js';
 import { renderCssGenerator } from './tools/css-generator.js';
 import { renderUrlShortener } from './tools/url-shortener.js';
@@ -18,6 +18,13 @@ import { renderTemplates } from './tools/py-templates.js';
 import { renderComprehension } from './tools/py-comprehension.js';
 import { renderFstring } from './tools/py-fstring.js';
 import { renderReference } from './tools/py-reference.js';
+// v1.2 — New tools
+import { renderRegex } from './tools/regex-tester.js';
+import { renderBase64Jwt } from './tools/base64-jwt.js';
+import { renderHashGen } from './tools/hash-gen.js';
+import { renderDiff } from './tools/diff-viewer.js';
+import { renderTimestamp } from './tools/timestamp.js';
+import { renderCurlConverter } from './tools/curl-converter.js';
 
 // ── Telegram Web App ──
 const tg = window.Telegram?.WebApp;
@@ -51,13 +58,13 @@ export function copyText(text) {
     showToast('Copied');
     haptic('success');
   }).catch(() => {
-    // fallback
+    // fallback for older browsers
     const ta = document.createElement('textarea');
     ta.value = text;
     ta.style.cssText = 'position:fixed;opacity:0';
     document.body.appendChild(ta);
     ta.select();
-    document.execCommand('copy');
+    try { document.execCommand('copy'); } catch (_) {}
     ta.remove();
     showToast('Copied');
   });
@@ -81,6 +88,13 @@ const routes = {
   'py-comprehension': renderComprehension,
   'py-fstring': renderFstring,
   'py-reference': renderReference,
+  // v1.2
+  'regex-tester': renderRegex,
+  'base64-jwt': renderBase64Jwt,
+  'hash-gen': renderHashGen,
+  'diff-viewer': renderDiff,
+  'timestamp': renderTimestamp,
+  'curl-converter': renderCurlConverter,
 };
 
 const routeTitles = {
@@ -100,6 +114,13 @@ const routeTitles = {
   'py-comprehension': 'List Comp',
   'py-fstring': 'f-string Builder',
   'py-reference': 'Python Reference',
+  // v1.2
+  'regex-tester': 'Regex Tester',
+  'base64-jwt': 'Base64 / JWT',
+  'hash-gen': 'Hash Generator',
+  'diff-viewer': 'Diff Viewer',
+  'timestamp': 'Timestamp',
+  'curl-converter': 'cURL → Fetch',
 };
 
 let currentCleanup = null;
@@ -125,6 +146,11 @@ function renderRoute() {
   if (typeof currentCleanup === 'function') {
     currentCleanup();
     currentCleanup = null;
+  }
+
+  // Track recent tool usage
+  if (!isHome && routes[route]) {
+    trackRecent(route);
   }
 
   // Build page shell
@@ -188,6 +214,12 @@ function init() {
     tg.setHeaderColor('#000000');
     tg.setBackgroundColor('#000000');
     if (tg.disableVerticalSwipes) tg.disableVerticalSwipes();
+
+    // Deep link support: ?startapp=tool-id
+    const startParam = tg.initDataUnsafe?.start_param;
+    if (startParam && routes[startParam]) {
+      window.location.hash = `#/${startParam}`;
+    }
   }
 
   // PWA registration

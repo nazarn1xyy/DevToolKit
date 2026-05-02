@@ -912,3 +912,133 @@ input[type="color"]::-webkit-color-swatch {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ── Home: Search ── */
+.home-search {
+  padding: 0 16px 4px;
+  padding-left: calc(16px + var(--safe-left));
+  padding-right: calc(16px + var(--safe-right));
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-tertiary);
+}
+
+.search-bar svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+}
+
+.search-bar input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-size: 15px;
+  font-family: inherit;
+}
+
+.search-bar input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* ── Home: Recents ── */
+.recent-strip {
+  margin-top: 8px;
+}
+
+.recent-scroll {
+  display: flex;
+  gap: 8px;
+  padding: 8px 16px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.recent-scroll::-webkit-scrollbar { display: none; }
+
+.recent-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: transform 0.2s var(--spring), background 0.15s;
+  flex-shrink: 0;
+}
+
+.recent-chip:active {
+  transform: scale(0.95);
+  background: var(--bg-hover);
+}
+
+.recent-chip svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* ── Home: Favorites star ── */
+.tool-card {
+  position: relative;
+}
+
+.fav-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.4;
+  transition: opacity 0.15s, transform 0.2s var(--spring), color 0.15s;
+}
+
+.fav-btn:active {
+  transform: scale(1.3);
+}
+
+.fav-btn.active {
+  color: #fff;
+  opacity: 1;
+}
+
+.fav-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* ── Diff Viewer ── */
+.diff-line { font-size: 12px; line-height: 1.7; font-family: 'SF Mono','Menlo',monospace; }
+.diff-add { color: #4ade80; background: rgba(74,222,128,0.08); }
+.diff-del { color: #f87171; background: rgba(248,113,113,0.08); }
+.diff-ctx { color: var(--text-tertiary); }
+
+/* ── Regex: highlights ── */
+.regex-match { background: rgba(255,255,255,0.15); border-radius: 2px; padding: 1px 0; }
+.regex-group { text-decoration: underline; text-underline-offset: 2px; }

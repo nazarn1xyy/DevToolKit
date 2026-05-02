@@ -53,13 +53,22 @@ export function renderUrlShortener(container) {
       if (!url || !/^https?:\/\/.+/i.test(url)) { showToast('Enter valid URL'); haptic('error'); return; }
       btn.disabled = true; btn.textContent = '...';
       try {
-        const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(url)}`);
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 5000);
+        const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(url)}`, { signal: controller.signal });
+        clearTimeout(timeout);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const short = await res.text();
+        if (!short || short.startsWith('Error')) throw new Error('API error');
         container.querySelector('#url-result-area').classList.remove('hidden');
         container.querySelector('#url-short').textContent = short;
         saveHistory({ short, original: url }); haptic('success');
         container.querySelector('#url-copy-res').onclick = () => copyText(short);
-      } catch { showToast('Failed'); haptic('error'); }
+      } catch (e) {
+        if (e.name === 'AbortError') showToast('Timeout — try again');
+        else showToast('Service unavailable');
+        haptic('error');
+      }
       btn.disabled = false; btn.innerHTML = `${icon('link', 18)} Shorten`;
     }
 

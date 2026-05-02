@@ -8,7 +8,8 @@ function save(list) { localStorage.setItem('dt_snippets', JSON.stringify(list));
 
 export function renderSnippets(container) {
   let searchQuery = '';
-  let showModal = false;
+  let modalMode = null; // null | 'new' | 'edit'
+  let editIdx = -1;
 
   function render() {
     const all = load();
@@ -16,11 +17,13 @@ export function renderSnippets(container) {
       ? all.filter(s => s.title.toLowerCase().includes(searchQuery) || s.lang.toLowerCase().includes(searchQuery) || s.code.toLowerCase().includes(searchQuery))
       : all;
 
+    const editItem = modalMode === 'edit' && editIdx >= 0 ? all[editIdx] : null;
+
     container.innerHTML = `
       <div class="tool-page flex-col gap-lg">
         <div class="section flex-col gap-md">
           <div class="color-input-row">
-            <input type="text" class="input" id="sn-search" placeholder="Search snippets..." value="${searchQuery}" spellcheck="false">
+            <input type="text" class="input" id="sn-search" placeholder="Search snippets..." value="${esc(searchQuery)}" spellcheck="false">
             <button class="btn" id="sn-add">${icon('plus', 18)}</button>
           </div>
         </div>
@@ -40,21 +43,22 @@ export function renderSnippets(container) {
               <div class="snippet-code">${esc(s.code)}</div>
               <div class="snippet-actions">
                 <button class="btn btn-sm btn-secondary sn-copy" data-i="${i}">${icon('copy', 14)} Copy</button>
+                <button class="btn btn-sm btn-secondary sn-edit" data-i="${i}">${icon('edit', 14)} Edit</button>
                 <button class="btn btn-sm btn-secondary sn-del" data-i="${i}">${icon('trash', 14)}</button>
               </div>
             </div>`).join('')}
         </div>`}
       </div>
 
-      ${showModal ? `
+      ${modalMode ? `
       <div class="modal-overlay" id="sn-overlay">
         <div class="modal-sheet">
-          <h3>New Snippet</h3>
-          <input type="text" class="input" id="sn-title" placeholder="Title" spellcheck="false">
-          <input type="text" class="input" id="sn-lang" placeholder="Language (js, py, css...)" spellcheck="false">
-          <textarea class="input" id="sn-code" placeholder="Paste code here..." rows="6" spellcheck="false"></textarea>
+          <h3>${modalMode === 'edit' ? 'Edit Snippet' : 'New Snippet'}</h3>
+          <input type="text" class="input" id="sn-title" placeholder="Title" spellcheck="false" value="${editItem ? esc(editItem.title) : ''}">
+          <input type="text" class="input" id="sn-lang" placeholder="Language (js, py, css...)" spellcheck="false" value="${editItem ? esc(editItem.lang) : ''}">
+          <textarea class="input" id="sn-code" placeholder="Paste code here..." rows="6" spellcheck="false">${editItem ? esc(editItem.code) : ''}</textarea>
           <div class="btn-row">
-            <button class="btn" id="sn-save">${icon('check', 18)} Save</button>
+            <button class="btn" id="sn-save">${icon('check', 18)} ${modalMode === 'edit' ? 'Update' : 'Save'}</button>
             <button class="btn btn-secondary" id="sn-cancel">Cancel</button>
           </div>
         </div>
@@ -67,7 +71,7 @@ export function renderSnippets(container) {
     });
 
     container.querySelector('#sn-add').addEventListener('click', () => {
-      showModal = true;
+      modalMode = 'new'; editIdx = -1;
       haptic('light');
       render();
       container.querySelector('#sn-title')?.focus();
@@ -78,6 +82,17 @@ export function renderSnippets(container) {
         e.stopPropagation();
         const s = load()[parseInt(btn.dataset.i)];
         if (s) copyText(s.code);
+      });
+    });
+
+    container.querySelectorAll('.sn-edit').forEach(btn => {
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        editIdx = parseInt(btn.dataset.i);
+        modalMode = 'edit';
+        haptic('light');
+        render();
+        container.querySelector('#sn-title')?.focus();
       });
     });
 
@@ -94,7 +109,7 @@ export function renderSnippets(container) {
 
     // Modal events
     container.querySelector('#sn-overlay')?.addEventListener('click', e => {
-      if (e.target.id === 'sn-overlay') { showModal = false; render(); }
+      if (e.target.id === 'sn-overlay') { modalMode = null; render(); }
     });
 
     container.querySelector('#sn-save')?.addEventListener('click', () => {
@@ -102,17 +117,24 @@ export function renderSnippets(container) {
       const lang = container.querySelector('#sn-lang').value.trim() || 'text';
       const code = container.querySelector('#sn-code').value;
       if (!title || !code) { showToast('Fill title & code'); haptic('error'); return; }
+
       const list = load();
-      list.unshift({ title, lang, code, ts: Date.now() });
+      if (modalMode === 'edit' && editIdx >= 0) {
+        list[editIdx] = { ...list[editIdx], title, lang, code };
+        showToast('Snippet updated');
+      } else {
+        list.unshift({ title, lang, code, ts: Date.now() });
+        showToast('Snippet saved');
+      }
       save(list);
-      showModal = false;
+      modalMode = null;
+      editIdx = -1;
       haptic('success');
-      showToast('Snippet saved');
       render();
     });
 
     container.querySelector('#sn-cancel')?.addEventListener('click', () => {
-      showModal = false;
+      modalMode = null;
       render();
     });
   }
@@ -121,5 +143,5 @@ export function renderSnippets(container) {
 }
 
 function esc(str) {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
