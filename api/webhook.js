@@ -31,7 +31,7 @@ export default async function handler(req, res) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           chat_id: chatId,
-          text: '*DevToolkit*\n\nDeveloper utilities — in your pocket.\n\n21 tools: colors, CSS gen, JSON formatter, regex tester, hash generator, diff viewer, Python generators, and more.',
+          text: '*DevToolkit*\n\nDeveloper utilities — in your pocket.\n\n23 tools: colors, CSS gen, JSON formatter, regex tester, hash generator, diff viewer, markdown preview, contrast checker, Python generators, and more.',
           parse_mode: 'Markdown',
           reply_markup: {
             inline_keyboard: [
